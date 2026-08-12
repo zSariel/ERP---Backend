@@ -15,8 +15,8 @@
     "express-rate-limit": "^8.6.1",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
-    "mysql2": "^3.22.5",
-    "sequelize": "^3.30.0"
+    "mysql2": "^3.23.3",
+    "sequelize": "^6.37.8"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.5"
