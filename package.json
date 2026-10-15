@@ -1,5 +1,11 @@
 {
   "scripts": {
+<<<<<<< HEAD
+=======
+    "reset-admin-password": "node scripts/resetAdminPassword.js",
+    "create-admin": "node scripts/createAdmin.js",
+    "test-email": "node scripts/testEmail.js",
+>>>>>>> master
     "start": "node server.js",
     "dev": "node server.js",
     "db:migrate": "sequelize-cli db:migrate",
@@ -16,6 +22,10 @@
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.23.3",
+<<<<<<< HEAD
+=======
+    "nodemailer": "^10.0.1",
+>>>>>>> master
     "sequelize": "^6.37.8"
   },
   "devDependencies": {

@@ -28,6 +28,18 @@ const PayableInstallment = sequelize.define(
       allowNull: false,
     },
 
+<<<<<<< HEAD
+=======
+    kind: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: "parcela",
+      validate: {
+        isIn: [["entrada", "parcela"]],
+      },
+    },
+
+>>>>>>> master
     amount: {
       type: DataTypes.DECIMAL(14, 2),
       allowNull: false,
@@ -55,7 +67,11 @@ const PayableInstallment = sequelize.define(
         "atrasado",
         "parcial",
         "pago",
+<<<<<<< HEAD
         "cancelado"
+=======
+        "cancelado",
+>>>>>>> master
       ),
       allowNull: false,
       defaultValue: "pendente",
@@ -70,6 +86,7 @@ const PayableInstallment = sequelize.define(
     indexes: [
       {
         unique: true,
+<<<<<<< HEAD
         fields: [
           "payable_id",
           "installment_number",
@@ -77,6 +94,12 @@ const PayableInstallment = sequelize.define(
       },
     ],
   }
+=======
+        fields: ["payable_id", "installment_number"],
+      },
+    ],
+  },
+>>>>>>> master
 );
 
 PayableInstallment.belongsTo(Payable, {
@@ -90,4 +113,8 @@ Payable.hasMany(PayableInstallment, {
   onDelete: "CASCADE",
 });
 
+<<<<<<< HEAD
 module.exports = PayableInstallment;
+=======
+module.exports = PayableInstallment;
+>>>>>>> master

@@ -21,6 +21,18 @@ const ReceivableInstallment = sequelize.define(
       allowNull: false,
     },
 
+<<<<<<< HEAD
+=======
+    kind: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: "parcela",
+      validate: {
+        isIn: [["entrada", "parcela"]],
+      },
+    },
+
+>>>>>>> master
     amount: {
       type: DataTypes.DECIMAL(14, 2),
       allowNull: false,
@@ -48,7 +60,11 @@ const ReceivableInstallment = sequelize.define(
         "parcial",
         "recebido",
         "atrasado",
+<<<<<<< HEAD
         "cancelado"
+=======
+        "cancelado",
+>>>>>>> master
       ),
       allowNull: false,
       defaultValue: "pendente",
@@ -59,7 +75,11 @@ const ReceivableInstallment = sequelize.define(
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
+<<<<<<< HEAD
   }
+=======
+  },
+>>>>>>> master
 );
 
 Receivable.hasMany(ReceivableInstallment, {
@@ -73,4 +93,8 @@ ReceivableInstallment.belongsTo(Receivable, {
   as: "receivable",
 });
 
+<<<<<<< HEAD
 module.exports = ReceivableInstallment;
+=======
+module.exports = ReceivableInstallment;
+>>>>>>> master
