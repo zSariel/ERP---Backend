@@ -25,18 +25,6 @@ const User = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-<<<<<<< HEAD
-  },
-  {
-    tableName: "users",
-    timestamps: true,
-    createdAt: "created_at",
-    updatedAt: false,
-  }
-);
-
-module.exports = User;
-=======
 
     role: {
       type: DataTypes.STRING(20),
@@ -87,4 +75,3 @@ module.exports = User;
 );
 
 module.exports = User;
->>>>>>> master

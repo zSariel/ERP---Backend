@@ -39,9 +39,6 @@ const ReceivablePayment = sequelize.define(
     },
 
     payment_method: {
-<<<<<<< HEAD
-      type: DataTypes.ENUM("transferencia"),
-=======
       type: DataTypes.ENUM(
         "transferencia",
         "pix",
@@ -49,7 +46,6 @@ const ReceivablePayment = sequelize.define(
         "dinheiro",
         "outro"
       ),
->>>>>>> master
       allowNull: false,
       defaultValue: "transferencia",
     },

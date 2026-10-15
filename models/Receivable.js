@@ -44,8 +44,6 @@ const Receivable = sequelize.define(
       allowNull: false,
     },
 
-<<<<<<< HEAD
-=======
     original_amount: {
       type: DataTypes.DECIMAL(15, 2),
       allowNull: false,
@@ -64,7 +62,6 @@ const Receivable = sequelize.define(
       defaultValue: 0,
     },
 
->>>>>>> master
     installments_count: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -82,16 +79,7 @@ const Receivable = sequelize.define(
     },
 
     status: {
-<<<<<<< HEAD
-      type: DataTypes.ENUM(
-        "pendente",
-        "parcial",
-        "recebido",
-        "cancelado"
-      ),
-=======
       type: DataTypes.ENUM("pendente", "parcial", "recebido", "cancelado"),
->>>>>>> master
       allowNull: false,
       defaultValue: "pendente",
     },
@@ -106,11 +94,7 @@ const Receivable = sequelize.define(
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
-<<<<<<< HEAD
-  }
-=======
   },
->>>>>>> master
 );
 
 Receivable.belongsTo(Project, {
@@ -143,8 +127,4 @@ Category.hasMany(Receivable, {
   as: "receivables",
 });
 
-<<<<<<< HEAD
 module.exports = Receivable;
-=======
-module.exports = Receivable;
->>>>>>> master

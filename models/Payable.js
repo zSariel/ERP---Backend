@@ -67,8 +67,6 @@ const Payable = sequelize.define(
       allowNull: false,
     },
 
-<<<<<<< HEAD
-=======
     original_amount: {
       type: DataTypes.DECIMAL(15, 2),
       allowNull: false,
@@ -87,7 +85,6 @@ const Payable = sequelize.define(
       defaultValue: 0,
     },
 
->>>>>>> master
     installments_count: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -110,16 +107,7 @@ const Payable = sequelize.define(
     },
 
     status: {
-<<<<<<< HEAD
-      type: DataTypes.ENUM(
-        "pendente",
-        "parcial",
-        "pago",
-        "cancelado"
-      ),
-=======
       type: DataTypes.ENUM("pendente", "parcial", "pago", "cancelado"),
->>>>>>> master
       allowNull: false,
       defaultValue: "pendente",
     },
@@ -134,11 +122,7 @@ const Payable = sequelize.define(
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
-<<<<<<< HEAD
-  }
-=======
   },
->>>>>>> master
 );
 
 Payable.belongsTo(Supplier, {
@@ -171,8 +155,4 @@ Category.hasMany(Payable, {
   as: "payables",
 });
 
-<<<<<<< HEAD
 module.exports = Payable;
-=======
-module.exports = Payable;
->>>>>>> master

@@ -3,17 +3,8 @@ const { Op } = require("sequelize");
 const sequelize = require("../config/database");
 
 const Payable = require("../models/Payable");
-<<<<<<< HEAD
-const PayableInstallment = require(
-  "../models/PayableInstallment"
-);
-const PayablePayment = require(
-  "../models/PayablePayment"
-);
-=======
 const PayableInstallment = require("../models/PayableInstallment");
 const PayablePayment = require("../models/PayablePayment");
->>>>>>> master
 
 const CostCenter = require("../models/CostCenter");
 const Supplier = require("../models/Supplier");
@@ -25,27 +16,6 @@ const FinancialAccount = require("../models/FinancialAccount");
  * em vencimentos como dia 29, 30 ou 31.
  */
 function addMonthsToDate(dateString, monthsToAdd) {
-<<<<<<< HEAD
-  const [year, month, day] = dateString
-    .split("-")
-    .map(Number);
-
-  const targetDate = new Date(
-    Date.UTC(year, month - 1 + monthsToAdd, 1)
-  );
-
-  const lastDayOfTargetMonth = new Date(
-    Date.UTC(
-      targetDate.getUTCFullYear(),
-      targetDate.getUTCMonth() + 1,
-      0
-    )
-  ).getUTCDate();
-
-  targetDate.setUTCDate(
-    Math.min(day, lastDayOfTargetMonth)
-  );
-=======
   const [year, month, day] = dateString.split("-").map(Number);
 
   const targetDate = new Date(Date.UTC(year, month - 1 + monthsToAdd, 1));
@@ -55,7 +25,6 @@ function addMonthsToDate(dateString, monthsToAdd) {
   ).getUTCDate();
 
   targetDate.setUTCDate(Math.min(day, lastDayOfTargetMonth));
->>>>>>> master
 
   return targetDate.toISOString().slice(0, 10);
 }
@@ -101,20 +70,10 @@ function createInstallmentsData({
 }) {
   const totalInCents = moneyToCents(totalAmount);
 
-<<<<<<< HEAD
-  const baseInstallmentInCents = Math.floor(
-    totalInCents / installmentsCount
-  );
-
-  const remainingCents =
-    totalInCents -
-    baseInstallmentInCents * installmentsCount;
-=======
   const baseInstallmentInCents = Math.floor(totalInCents / installmentsCount);
 
   const remainingCents =
     totalInCents - baseInstallmentInCents * installmentsCount;
->>>>>>> master
 
   const installments = [];
   const today = getToday();
@@ -124,26 +83,6 @@ function createInstallmentsData({
     installmentNumber <= installmentsCount;
     installmentNumber += 1
   ) {
-<<<<<<< HEAD
-    const isLastInstallment =
-      installmentNumber === installmentsCount;
-
-    const installmentInCents =
-      baseInstallmentInCents +
-      (isLastInstallment ? remainingCents : 0);
-
-    const dueDate = addMonthsToDate(
-      firstDueDate,
-      installmentNumber - 1
-    );
-
-    let installmentStatus = status;
-
-    if (
-      status !== "cancelado" &&
-      dueDate < today
-    ) {
-=======
     const isLastInstallment = installmentNumber === installmentsCount;
 
     const installmentInCents =
@@ -154,7 +93,6 @@ function createInstallmentsData({
     let installmentStatus = status;
 
     if (status !== "cancelado" && dueDate < today) {
->>>>>>> master
       installmentStatus = "atrasado";
     }
 
@@ -173,8 +111,6 @@ function createInstallmentsData({
 }
 
 /**
-<<<<<<< HEAD
-=======
  * Normaliza parcelas personalizadas enviadas pelo frontend.
  *
  * Cada item pode conter:
@@ -508,7 +444,6 @@ async function syncCustomInstallments({
 }
 
 /**
->>>>>>> master
  * Relacionamentos retornados nas consultas.
  */
 function getPayableIncludes() {
@@ -539,17 +474,7 @@ function getPayableIncludes() {
             {
               model: FinancialAccount,
               as: "financial_account",
-<<<<<<< HEAD
-              attributes: [
-                "id",
-                "code",
-                "name",
-                "bank",
-                "active",
-              ],
-=======
               attributes: ["id", "code", "name", "bank", "active"],
->>>>>>> master
             },
           ],
         },
@@ -568,59 +493,17 @@ async function rollbackTransaction(transaction) {
  * Calcula os totais da conta a pagar.
  */
 function buildPayableData(payable) {
-<<<<<<< HEAD
-  const data = payable.toJSON
-    ? payable.toJSON()
-    : payable;
-=======
   const data = payable.toJSON ? payable.toJSON() : payable;
->>>>>>> master
 
   const installments = data.installments || [];
 
   const paidAmount = installments.reduce(
-<<<<<<< HEAD
-    (total, installment) =>
-      total + Number(installment.paid_amount || 0),
-    0
-=======
     (total, installment) => total + Number(installment.paid_amount || 0),
     0,
->>>>>>> master
   );
 
   const totalAmount = Number(data.total_amount || 0);
 
-<<<<<<< HEAD
-  const overdueAmount = installments.reduce(
-    (total, installment) => {
-      if (
-        installment.status === "atrasado" &&
-        data.status !== "cancelado"
-      ) {
-        return (
-          total +
-          Math.max(
-            Number(installment.amount || 0) -
-              Number(installment.paid_amount || 0),
-            0
-          )
-        );
-      }
-
-      return total;
-    },
-    0
-  );
-
-  return {
-    ...data,
-    paid_amount: paidAmount,
-    remaining_amount: Math.max(
-      totalAmount - paidAmount,
-      0
-    ),
-=======
   const storedOriginalAmount = Number(data.original_amount || 0);
 
   const originalAmount =
@@ -654,7 +537,6 @@ function buildPayableData(payable) {
     surcharge_amount: surchargeAmount,
     paid_amount: paidAmount,
     remaining_amount: Math.max(totalAmount - paidAmount, 0),
->>>>>>> master
     overdue_amount: overdueAmount,
     is_overdue: overdueAmount > 0,
   };
@@ -663,14 +545,7 @@ function buildPayableData(payable) {
 /**
  * Busca todas as parcelas de uma conta.
  */
-<<<<<<< HEAD
-async function getPayableInstallments(
-  payableId,
-  transaction
-) {
-=======
 async function getPayableInstallments(payableId, transaction) {
->>>>>>> master
   return PayableInstallment.findAll({
     where: {
       payable_id: payableId,
@@ -684,14 +559,7 @@ async function getPayableInstallments(payableId, transaction) {
  * Conta qualquer histórico de pagamento,
  * incluindo pagamentos estornados.
  */
-<<<<<<< HEAD
-async function getPaymentHistoryCount(
-  payableId,
-  transaction
-) {
-=======
 async function getPaymentHistoryCount(payableId, transaction) {
->>>>>>> master
   const installments = await PayableInstallment.findAll({
     where: {
       payable_id: payableId,
@@ -701,13 +569,7 @@ async function getPaymentHistoryCount(payableId, transaction) {
     transaction,
   });
 
-<<<<<<< HEAD
-  const installmentIds = installments.map(
-    (installment) => installment.id
-  );
-=======
   const installmentIds = installments.map((installment) => installment.id);
->>>>>>> master
 
   if (installmentIds.length === 0) {
     return 0;
@@ -732,14 +594,7 @@ async function validateRelations({
   categoryId,
   transaction,
 }) {
-<<<<<<< HEAD
-  const costCenter = await CostCenter.findByPk(
-    costCenterId,
-    { transaction }
-  );
-=======
   const costCenter = await CostCenter.findByPk(costCenterId, { transaction });
->>>>>>> master
 
   if (!costCenter) {
     return {
@@ -749,14 +604,7 @@ async function validateRelations({
   }
 
   if (supplierId) {
-<<<<<<< HEAD
-    const supplier = await Supplier.findByPk(
-      supplierId,
-      { transaction }
-    );
-=======
     const supplier = await Supplier.findByPk(supplierId, { transaction });
->>>>>>> master
 
     if (!supplier) {
       return {
@@ -773,14 +621,7 @@ async function validateRelations({
     };
   }
 
-<<<<<<< HEAD
-  const category = await Category.findByPk(
-    categoryId,
-    { transaction }
-  );
-=======
   const category = await Category.findByPk(categoryId, { transaction });
->>>>>>> master
 
   if (!category) {
     return {
@@ -792,23 +633,11 @@ async function validateRelations({
   if (category.type !== "despesa") {
     return {
       status: 400,
-<<<<<<< HEAD
-      error:
-        "A categoria selecionada deve ser do tipo despesa.",
-    };
-  }
-
-  if (
-    category.active === false ||
-    category.active === 0
-  ) {
-=======
       error: "A categoria selecionada deve ser do tipo despesa.",
     };
   }
 
   if (category.active === false || category.active === 0) {
->>>>>>> master
     return {
       status: 400,
       error: "A categoria selecionada está inativa.",
@@ -834,31 +663,16 @@ const createPayable = async (req, res) => {
       document_number,
       history_code,
       total_amount,
-<<<<<<< HEAD
-      installments_count,
-=======
       original_amount,
       installments_count,
       installments: customInstallments,
->>>>>>> master
       issue_date,
       competence_date,
       first_due_date,
       note,
     } = req.body;
 
-<<<<<<< HEAD
-    const costCenterId =
-      cost_center_id || project_id;
-
-    const installmentsCount = Number(
-      installments_count || 1
-    );
-
-    const totalInCents = moneyToCents(total_amount);
-=======
     const costCenterId = cost_center_id || project_id;
->>>>>>> master
 
     if (!description?.trim()) {
       await rollbackTransaction(transaction);
@@ -876,40 +690,6 @@ const createPayable = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    if (
-      !Number.isFinite(totalInCents) ||
-      totalInCents <= 0
-    ) {
-      await rollbackTransaction(transaction);
-
-      return res.status(400).json({
-        error: "O valor total deve ser maior que zero.",
-      });
-    }
-
-    if (
-      !Number.isInteger(installmentsCount) ||
-      installmentsCount < 1
-    ) {
-      await rollbackTransaction(transaction);
-
-      return res.status(400).json({
-        error:
-          "A quantidade de parcelas deve ser pelo menos 1.",
-      });
-    }
-
-    if (!first_due_date) {
-      await rollbackTransaction(transaction);
-
-      return res.status(400).json({
-        error: "O primeiro vencimento é obrigatório.",
-      });
-    }
-
-=======
->>>>>>> master
     const relationError = await validateRelations({
       costCenterId,
       supplierId: supplier_id,
@@ -920,13 +700,6 @@ const createPayable = async (req, res) => {
     if (relationError) {
       await rollbackTransaction(transaction);
 
-<<<<<<< HEAD
-      return res
-        .status(relationError.status)
-        .json({
-          error: relationError.error,
-        });
-=======
       return res.status(relationError.status).json({
         error: relationError.error,
       });
@@ -1010,36 +783,11 @@ const createPayable = async (req, res) => {
       finalInCents = originalInCents;
 
       firstDueDate = first_due_date;
->>>>>>> master
     }
 
     const payable = await Payable.create(
       {
         code: null,
-<<<<<<< HEAD
-        description: description.trim(),
-        supplier_id: supplier_id
-          ? Number(supplier_id)
-          : null,
-        project_id: Number(costCenterId),
-        category_id: Number(category_id),
-        document_number:
-          document_number?.trim() || null,
-        history_code:
-          history_code?.trim() || null,
-        total_amount: (
-          totalInCents / 100
-        ).toFixed(2),
-        installments_count: installmentsCount,
-        issue_date: issue_date || null,
-        competence_date:
-          competence_date || null,
-        first_due_date,
-        status: "pendente",
-        note: note?.trim() || null,
-      },
-      { transaction }
-=======
 
         description: description.trim(),
 
@@ -1080,41 +828,11 @@ const createPayable = async (req, res) => {
       {
         transaction,
       },
->>>>>>> master
     );
 
     const code = generatePayableCode(payable.id);
 
     await payable.update(
-<<<<<<< HEAD
-      { code },
-      { transaction }
-    );
-
-    const installments = createInstallmentsData({
-      payableId: payable.id,
-      totalAmount: totalInCents / 100,
-      installmentsCount,
-      firstDueDate: first_due_date,
-    });
-
-    await PayableInstallment.bulkCreate(
-      installments,
-      { transaction }
-    );
-
-    await transaction.commit();
-
-    const createdPayable = await Payable.findByPk(
-      payable.id,
-      {
-        include: getPayableIncludes(),
-      }
-    );
-
-    return res.status(201).json({
-      message: "Conta a pagar criada com sucesso.",
-=======
       {
         code,
       },
@@ -1181,20 +899,12 @@ const createPayable = async (req, res) => {
     return res.status(201).json({
       message: "Conta a pagar criada com sucesso.",
 
->>>>>>> master
       payable: buildPayableData(createdPayable),
     });
   } catch (error) {
     await rollbackTransaction(transaction);
 
-<<<<<<< HEAD
-    console.error(
-      "Erro ao criar conta a pagar:",
-      error
-    );
-=======
     console.error("Erro ao criar conta a pagar:", error);
->>>>>>> master
 
     return res.status(500).json({
       error: "Erro ao criar conta a pagar.",
@@ -1204,272 +914,6 @@ const createPayable = async (req, res) => {
 };
 
 /**
-<<<<<<< HEAD
- * Listar contas a pagar com:
- * - paginação
- * - pesquisa
- * - filtros
- * - vencimentos por parcela
- * - somente vencidas
- */
-const listPayables = async (req, res) => {
-  try {
-    const paginationRequested =
-      req.query.page !== undefined ||
-      req.query.limit !== undefined;
-
-    // =====================================================
-    // MODO ANTIGO
-    // Mantém o frontend atual funcionando.
-    // =====================================================
-    if (!paginationRequested) {
-      const payables = await Payable.findAll({
-        include: getPayableIncludes(),
-        order: [
-          ["id", "DESC"],
-          [
-            {
-              model: PayableInstallment,
-              as: "installments",
-            },
-            "installment_number",
-            "ASC",
-          ],
-        ],
-      });
-
-      const result = payables.map(buildPayableData);
-      return res.json(result);
-    }
-
-    // =====================================================
-    // PARÂMETROS
-    // =====================================================
-    const {
-      search,
-      status,
-      supplier_id,
-      category_id,
-      cost_center_id,
-      due_from,
-      due_to,
-      overdue_only,
-    } = req.query;
-
-    const requestedPage = Number(req.query.page || 1);
-    const requestedLimit = Number(req.query.limit || 25);
-
-    const page =
-      Number.isInteger(requestedPage) && requestedPage > 0
-        ? requestedPage
-        : 1;
-
-    const limit =
-      Number.isInteger(requestedLimit) && requestedLimit > 0
-        ? Math.min(requestedLimit, 100)
-        : 25;
-
-    const offset = (page - 1) * limit;
-
-    const overdueOnly = ["true", "1", "yes"].includes(
-      String(overdue_only || "")
-        .trim()
-        .toLowerCase()
-    );
-
-    // =====================================================
-    // FILTROS DA CONTA
-    // =====================================================
-    const where = {};
-
-    if (search && String(search).trim()) {
-      const searchValue = String(search).trim();
-
-      where[Op.or] = [
-        {
-          code: {
-            [Op.like]: `%${searchValue}%`,
-          },
-        },
-        {
-          description: {
-            [Op.like]: `%${searchValue}%`,
-          },
-        },
-        {
-          document_number: {
-            [Op.like]: `%${searchValue}%`,
-          },
-        },
-        {
-          history_code: {
-            [Op.like]: `%${searchValue}%`,
-          },
-        },
-      ];
-    }
-
-    if (status) {
-      where.status = status;
-    }
-
-    if (supplier_id) {
-      where.supplier_id = Number(supplier_id);
-    }
-
-    if (category_id) {
-      where.category_id = Number(category_id);
-    }
-
-    if (cost_center_id) {
-      where.project_id = Number(cost_center_id);
-    }
-
-    // =====================================================
-    // FILTROS DAS PARCELAS
-    // =====================================================
-    const installmentWhere = {};
-    let needsInstallmentFilter = false;
-
-    if (due_from) {
-      installmentWhere.due_date = {
-        ...(installmentWhere.due_date || {}),
-        [Op.gte]: due_from,
-      };
-      needsInstallmentFilter = true;
-    }
-
-    if (due_to) {
-      installmentWhere.due_date = {
-        ...(installmentWhere.due_date || {}),
-        [Op.lte]: due_to,
-      };
-      needsInstallmentFilter = true;
-    }
-
-    if (overdueOnly) {
-      installmentWhere.due_date = {
-        ...(installmentWhere.due_date || {}),
-        [Op.lt]: getToday(),
-      };
-
-      installmentWhere.status = {
-        [Op.notIn]: ["pago", "cancelado"],
-      };
-
-      installmentWhere.paid_amount = {
-        [Op.lt]: sequelize.col("amount"),
-      };
-
-      needsInstallmentFilter = true;
-    } else if (needsInstallmentFilter) {
-      installmentWhere.status = {
-        [Op.ne]: "cancelado",
-      };
-    }
-
-    // =====================================================
-    // CONTAS QUE POSSUEM PARCELAS COMPATÍVEIS
-    // =====================================================
-    if (needsInstallmentFilter) {
-      const installmentRows =
-        await PayableInstallment.findAll({
-          attributes: ["payable_id"],
-          where: installmentWhere,
-          group: ["payable_id"],
-          raw: true,
-        });
-
-      const installmentPayableIds = installmentRows.map(
-        (item) => Number(item.payable_id)
-      );
-
-      if (installmentPayableIds.length === 0) {
-        return res.json({
-          data: [],
-          pagination: {
-            page,
-            limit,
-            total: 0,
-            totalPages: 0,
-            hasPreviousPage: false,
-            hasNextPage: false,
-          },
-        });
-      }
-
-      where.id = {
-        [Op.in]: installmentPayableIds,
-      };
-    }
-
-    // =====================================================
-    // TOTAL DE CONTAS COM OS FILTROS
-    // =====================================================
-    const total = await Payable.count({ where });
-
-    // =====================================================
-    // PEGAR SOMENTE OS IDs DA PÁGINA
-    // =====================================================
-    const payableIds = await Payable.findAll({
-      attributes: ["id"],
-      where,
-      order: [["id", "DESC"]],
-      limit,
-      offset,
-      raw: true,
-    });
-
-    const ids = payableIds.map((item) => Number(item.id));
-
-    // =====================================================
-    // BUSCAR DADOS COMPLETOS
-    // =====================================================
-    let payables = [];
-
-    if (ids.length > 0) {
-      payables = await Payable.findAll({
-        where: {
-          id: {
-            [Op.in]: ids,
-          },
-        },
-        include: getPayableIncludes(),
-        order: [
-          ["id", "DESC"],
-          [
-            {
-              model: PayableInstallment,
-              as: "installments",
-            },
-            "installment_number",
-            "ASC",
-          ],
-        ],
-      });
-    }
-
-    const data = payables.map(buildPayableData);
-    const totalPages =
-      total === 0 ? 0 : Math.ceil(total / limit);
-
-    return res.json({
-      data,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasPreviousPage: page > 1,
-        hasNextPage: page < totalPages,
-      },
-    });
-  } catch (error) {
-    console.error(
-      "Erro ao listar contas a pagar:",
-      error
-    );
-=======
  * Listar contas a pagar.
  */
 const listPayables = async (req, res) => {
@@ -1494,7 +938,6 @@ const listPayables = async (req, res) => {
     return res.json(result);
   } catch (error) {
     console.error("Erro ao listar contas a pagar:", error);
->>>>>>> master
 
     return res.status(500).json({
       error: "Erro ao listar contas a pagar.",
@@ -1506,15 +949,8 @@ const listPayables = async (req, res) => {
 /**
  * Resumo financeiro das contas a pagar.
  *
-<<<<<<< HEAD
- * GET /payables/summary
- *
- * Retorna os totais de todas as contas,
- * independentemente da paginação da tabela.
-=======
  * O total considera o valor FINAL negociado
  * armazenado em total_amount.
->>>>>>> master
  */
 const getPayablesSummary = async (req, res) => {
   try {
@@ -1528,64 +964,11 @@ const getPayablesSummary = async (req, res) => {
               [Op.ne]: "cancelado",
             },
           },
-<<<<<<< HEAD
-        })
-=======
         }),
->>>>>>> master
       ) || 0;
 
     const paidAmount =
       Number(
-<<<<<<< HEAD
-        await PayableInstallment.sum(
-          "paid_amount",
-          {
-            where: {
-              status: {
-                [Op.ne]: "cancelado",
-              },
-            },
-          }
-        )
-      ) || 0;
-
-    const remainingAmount = Math.max(
-      totalAmount - paidAmount,
-      0
-    );
-
-    const overdueInstallments =
-      await PayableInstallment.count({
-        where: {
-          due_date: {
-            [Op.lt]: today,
-          },
-          status: {
-            [Op.notIn]: ["pago", "cancelado"],
-          },
-          paid_amount: {
-            [Op.lt]: sequelize.col("amount"),
-          },
-        },
-      });
-
-    return res.json({
-      total_amount: totalAmount,
-      paid_amount: paidAmount,
-      remaining_amount: remainingAmount,
-      overdue_installments: overdueInstallments,
-    });
-  } catch (error) {
-    console.error(
-      "Erro ao gerar resumo das contas a pagar:",
-      error
-    );
-
-    return res.status(500).json({
-      error:
-        "Erro ao gerar resumo das contas a pagar.",
-=======
         await PayableInstallment.sum("paid_amount", {
           where: {
             status: {
@@ -1627,7 +1010,6 @@ const getPayablesSummary = async (req, res) => {
 
     return res.status(500).json({
       error: "Erro ao gerar resumo das contas a pagar.",
->>>>>>> master
       details: error.message,
     });
   }
@@ -1662,14 +1044,7 @@ const getPayableById = async (req, res) => {
 
     return res.json(buildPayableData(payable));
   } catch (error) {
-<<<<<<< HEAD
-    console.error(
-      "Erro ao buscar conta a pagar:",
-      error
-    );
-=======
     console.error("Erro ao buscar conta a pagar:", error);
->>>>>>> master
 
     return res.status(500).json({
       error: "Erro ao buscar conta a pagar.",
@@ -1708,13 +1083,9 @@ const updatePayable = async (req, res) => {
       document_number,
       history_code,
       total_amount,
-<<<<<<< HEAD
-      installments_count,
-=======
       original_amount,
       installments_count,
       installments: customInstallments,
->>>>>>> master
       issue_date,
       competence_date,
       first_due_date,
@@ -1734,77 +1105,31 @@ const updatePayable = async (req, res) => {
           : payable.project_id;
 
     const newSupplierId =
-<<<<<<< HEAD
-      supplier_id === undefined
-        ? payable.supplier_id
-        : supplier_id || null;
-
-    const newCategoryId =
-      category_id === undefined
-        ? payable.category_id
-        : category_id;
-=======
       supplier_id === undefined ? payable.supplier_id : supplier_id || null;
 
     const newCategoryId =
       category_id === undefined ? payable.category_id : category_id;
->>>>>>> master
 
     const newDocumentNumber =
       document_number === undefined
         ? payable.document_number
-<<<<<<< HEAD
-        : String(document_number).trim() || null;
-=======
         : String(document_number || "").trim() || null;
->>>>>>> master
 
     const newHistoryCode =
       history_code === undefined
         ? payable.history_code
-<<<<<<< HEAD
-        : String(history_code).trim() || null;
-
-    const newTotalInCents =
-      total_amount === undefined
-        ? moneyToCents(payable.total_amount)
-        : moneyToCents(total_amount);
-
-    const newInstallmentsCount =
-      installments_count === undefined
-        ? Number(payable.installments_count)
-        : Number(installments_count);
-
-    const newIssueDate =
-      issue_date === undefined
-        ? payable.issue_date
-        : issue_date || null;
-=======
         : String(history_code || "").trim() || null;
 
     const newIssueDate =
       issue_date === undefined ? payable.issue_date : issue_date || null;
->>>>>>> master
 
     const newCompetenceDate =
       competence_date === undefined
         ? payable.competence_date
         : competence_date || null;
 
-<<<<<<< HEAD
-    const newFirstDueDate =
-      first_due_date === undefined
-        ? payable.first_due_date
-        : first_due_date;
-
-    const newNote =
-      note === undefined
-        ? payable.note
-        : String(note).trim() || null;
-=======
     const newNote =
       note === undefined ? payable.note : String(note || "").trim() || null;
->>>>>>> master
 
     if (!newDescription) {
       await rollbackTransaction(transaction);
@@ -1830,12 +1155,6 @@ const updatePayable = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    if (
-      !Number.isFinite(newTotalInCents) ||
-      newTotalInCents <= 0
-    ) {
-=======
     const relationError = await validateRelations({
       costCenterId: newCostCenterId,
 
@@ -1993,7 +1312,6 @@ const updatePayable = async (req, res) => {
       first_due_date === undefined ? payable.first_due_date : first_due_date;
 
     if (!Number.isFinite(newTotalInCents) || newTotalInCents <= 0) {
->>>>>>> master
       await rollbackTransaction(transaction);
 
       return res.status(400).json({
@@ -2001,23 +1319,11 @@ const updatePayable = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    if (
-      !Number.isInteger(newInstallmentsCount) ||
-      newInstallmentsCount < 1
-    ) {
-      await rollbackTransaction(transaction);
-
-      return res.status(400).json({
-        error:
-          "A quantidade de parcelas deve ser pelo menos 1.",
-=======
     if (!Number.isInteger(newInstallmentsCount) || newInstallmentsCount < 1) {
       await rollbackTransaction(transaction);
 
       return res.status(400).json({
         error: "A quantidade de parcelas deve ser pelo menos 1.",
->>>>>>> master
       });
     }
 
@@ -2029,40 +1335,6 @@ const updatePayable = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    const installments = await getPayableInstallments(
-      id,
-      transaction
-    );
-
-    const totalPaidInCents = installments.reduce(
-      (total, installment) =>
-        total +
-        moneyToCents(installment.paid_amount || 0),
-      0
-    );
-
-    const currentTotalInCents = moneyToCents(
-      payable.total_amount
-    );
-
-    const financialDataChanged =
-      newTotalInCents !== currentTotalInCents ||
-      newInstallmentsCount !==
-        Number(payable.installments_count) ||
-      newFirstDueDate !== payable.first_due_date;
-
-    const paymentHistoryCount =
-      await getPaymentHistoryCount(
-        id,
-        transaction
-      );
-
-    if (
-      financialDataChanged &&
-      paymentHistoryCount > 0
-    ) {
-=======
     const installments = await getPayableInstallments(id, transaction);
 
     const currentTotalInCents = moneyToCents(payable.total_amount);
@@ -2075,67 +1347,10 @@ const updatePayable = async (req, res) => {
     const paymentHistoryCount = await getPaymentHistoryCount(id, transaction);
 
     if (financialDataChanged && paymentHistoryCount > 0) {
->>>>>>> master
       await rollbackTransaction(transaction);
 
       return res.status(409).json({
         error:
-<<<<<<< HEAD
-          "Não é possível alterar valor, parcelas ou vencimento porque esta conta possui histórico de pagamentos.",
-      });
-    }
-
-    if (
-      financialDataChanged &&
-      totalPaidInCents > 0
-    ) {
-      await rollbackTransaction(transaction);
-
-      return res.status(409).json({
-        error:
-          "Não é possível alterar valor, parcelas ou vencimento depois de registrar pagamentos.",
-      });
-    }
-
-    const relationError = await validateRelations({
-      costCenterId: newCostCenterId,
-      supplierId: newSupplierId,
-      categoryId: newCategoryId,
-      transaction,
-    });
-
-    if (relationError) {
-      await rollbackTransaction(transaction);
-
-      return res
-        .status(relationError.status)
-        .json({
-          error: relationError.error,
-        });
-    }
-
-    await payable.update(
-      {
-        description: newDescription,
-        supplier_id: newSupplierId
-          ? Number(newSupplierId)
-          : null,
-        project_id: Number(newCostCenterId),
-        category_id: Number(newCategoryId),
-        document_number: newDocumentNumber,
-        history_code: newHistoryCode,
-        total_amount: (
-          newTotalInCents / 100
-        ).toFixed(2),
-        installments_count:
-          newInstallmentsCount,
-        issue_date: newIssueDate,
-        competence_date: newCompetenceDate,
-        first_due_date: newFirstDueDate,
-        note: newNote,
-      },
-      { transaction }
-=======
           "Para editar uma conta que já possui histórico financeiro, envie a grade de parcelas personalizada.",
       });
     }
@@ -2175,7 +1390,6 @@ const updatePayable = async (req, res) => {
       {
         transaction,
       },
->>>>>>> master
     );
 
     if (financialDataChanged) {
@@ -2186,27 +1400,6 @@ const updatePayable = async (req, res) => {
         transaction,
       });
 
-<<<<<<< HEAD
-      const installmentStatus =
-        payable.status === "cancelado"
-          ? "cancelado"
-          : "pendente";
-
-      const newInstallments =
-        createInstallmentsData({
-          payableId: payable.id,
-          totalAmount: newTotalInCents / 100,
-          installmentsCount:
-            newInstallmentsCount,
-          firstDueDate: newFirstDueDate,
-          status: installmentStatus,
-        });
-
-      await PayableInstallment.bulkCreate(
-        newInstallments,
-        { transaction }
-      );
-=======
       const newInstallments = createInstallmentsData({
         payableId: payable.id,
 
@@ -2225,23 +1418,10 @@ const updatePayable = async (req, res) => {
       await PayableInstallment.bulkCreate(newInstallments, {
         transaction,
       });
->>>>>>> master
     }
 
     await transaction.commit();
 
-<<<<<<< HEAD
-    const updatedPayable = await Payable.findByPk(
-      id,
-      {
-        include: getPayableIncludes(),
-      }
-    );
-
-    return res.json({
-      message:
-        "Conta a pagar atualizada com sucesso.",
-=======
     const updatedPayable = await Payable.findByPk(id, {
       include: getPayableIncludes(),
     });
@@ -2249,20 +1429,12 @@ const updatePayable = async (req, res) => {
     return res.json({
       message: "Conta a pagar atualizada com sucesso.",
 
->>>>>>> master
       payable: buildPayableData(updatedPayable),
     });
   } catch (error) {
     await rollbackTransaction(transaction);
 
-<<<<<<< HEAD
-    console.error(
-      "Erro ao atualizar conta a pagar:",
-      error
-    );
-=======
     console.error("Erro ao atualizar conta a pagar:", error);
->>>>>>> master
 
     return res.status(500).json({
       error: "Erro ao atualizar conta a pagar.",
@@ -2281,25 +1453,13 @@ const updatePayableStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-<<<<<<< HEAD
-    const allowedStatuses = [
-      "pendente",
-      "cancelado",
-    ];
-=======
     const allowedStatuses = ["pendente", "cancelado"];
->>>>>>> master
 
     if (!allowedStatuses.includes(status)) {
       await rollbackTransaction(transaction);
 
       return res.status(400).json({
-<<<<<<< HEAD
-        error:
-          "O status manual deve ser pendente ou cancelado.",
-=======
         error: "O status manual deve ser pendente ou cancelado.",
->>>>>>> master
       });
     }
 
@@ -2315,24 +1475,6 @@ const updatePayableStatus = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    const installments = await getPayableInstallments(
-      id,
-      transaction
-    );
-
-    const totalPaidInCents = installments.reduce(
-      (total, installment) =>
-        total +
-        moneyToCents(installment.paid_amount || 0),
-      0
-    );
-
-    if (
-      status === "cancelado" &&
-      totalPaidInCents > 0
-    ) {
-=======
     const installments = await getPayableInstallments(id, transaction);
 
     const totalPaidInCents = installments.reduce(
@@ -2342,7 +1484,6 @@ const updatePayableStatus = async (req, res) => {
     );
 
     if (status === "cancelado" && totalPaidInCents > 0) {
->>>>>>> master
       await rollbackTransaction(transaction);
 
       return res.status(409).json({
@@ -2356,11 +1497,7 @@ const updatePayableStatus = async (req, res) => {
         {
           status: "cancelado",
         },
-<<<<<<< HEAD
-        { transaction }
-=======
         { transaction },
->>>>>>> master
       );
 
       await PayableInstallment.update(
@@ -2372,11 +1509,7 @@ const updatePayableStatus = async (req, res) => {
             payable_id: id,
           },
           transaction,
-<<<<<<< HEAD
-        }
-=======
         },
->>>>>>> master
       );
     }
 
@@ -2384,19 +1517,9 @@ const updatePayableStatus = async (req, res) => {
       const today = getToday();
 
       for (const installment of installments) {
-<<<<<<< HEAD
-        const amountInCents = moneyToCents(
-          installment.amount
-        );
-
-        const paidInCents = moneyToCents(
-          installment.paid_amount || 0
-        );
-=======
         const amountInCents = moneyToCents(installment.amount);
 
         const paidInCents = moneyToCents(installment.paid_amount || 0);
->>>>>>> master
 
         let installmentStatus = "pendente";
 
@@ -2412,21 +1535,6 @@ const updatePayableStatus = async (req, res) => {
           {
             status: installmentStatus,
           },
-<<<<<<< HEAD
-          { transaction }
-        );
-      }
-
-      const totalAmountInCents = moneyToCents(
-        payable.total_amount
-      );
-
-      let payableStatus = "pendente";
-
-      if (
-        totalPaidInCents >= totalAmountInCents
-      ) {
-=======
           { transaction },
         );
       }
@@ -2436,7 +1544,6 @@ const updatePayableStatus = async (req, res) => {
       let payableStatus = "pendente";
 
       if (totalPaidInCents >= totalAmountInCents) {
->>>>>>> master
         payableStatus = "pago";
       } else if (totalPaidInCents > 0) {
         payableStatus = "parcial";
@@ -2446,28 +1553,15 @@ const updatePayableStatus = async (req, res) => {
         {
           status: payableStatus,
         },
-<<<<<<< HEAD
-        { transaction }
-=======
         { transaction },
->>>>>>> master
       );
     }
 
     await transaction.commit();
 
-<<<<<<< HEAD
-    const updatedPayable = await Payable.findByPk(
-      id,
-      {
-        include: getPayableIncludes(),
-      }
-    );
-=======
     const updatedPayable = await Payable.findByPk(id, {
       include: getPayableIncludes(),
     });
->>>>>>> master
 
     return res.json({
       message: "Status atualizado com sucesso.",
@@ -2476,21 +1570,10 @@ const updatePayableStatus = async (req, res) => {
   } catch (error) {
     await rollbackTransaction(transaction);
 
-<<<<<<< HEAD
-    console.error(
-      "Erro ao atualizar status da conta a pagar:",
-      error
-    );
-
-    return res.status(500).json({
-      error:
-        "Erro ao atualizar status da conta a pagar.",
-=======
     console.error("Erro ao atualizar status da conta a pagar:", error);
 
     return res.status(500).json({
       error: "Erro ao atualizar status da conta a pagar.",
->>>>>>> master
       details: error.message,
     });
   }
@@ -2517,15 +1600,7 @@ const deletePayable = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    const paymentHistoryCount =
-      await getPaymentHistoryCount(
-        id,
-        transaction
-      );
-=======
     const paymentHistoryCount = await getPaymentHistoryCount(id, transaction);
->>>>>>> master
 
     if (paymentHistoryCount > 0) {
       await rollbackTransaction(transaction);
@@ -2548,24 +1623,12 @@ const deletePayable = async (req, res) => {
     await transaction.commit();
 
     return res.json({
-<<<<<<< HEAD
-      message:
-        "Conta a pagar excluída com sucesso.",
-=======
       message: "Conta a pagar excluída com sucesso.",
->>>>>>> master
     });
   } catch (error) {
     await rollbackTransaction(transaction);
 
-<<<<<<< HEAD
-    console.error(
-      "Erro ao excluir conta a pagar:",
-      error
-    );
-=======
     console.error("Erro ao excluir conta a pagar:", error);
->>>>>>> master
 
     return res.status(500).json({
       error: "Erro ao excluir conta a pagar.",
@@ -2578,14 +1641,7 @@ const deletePayable = async (req, res) => {
  * Recalcula uma parcela usando somente
  * pagamentos confirmados.
  */
-<<<<<<< HEAD
-async function recalculateInstallment(
-  installment,
-  transaction
-) {
-=======
 async function recalculateInstallment(installment, transaction) {
->>>>>>> master
   const payments = await PayablePayment.findAll({
     where: {
       installment_id: installment.id,
@@ -2599,22 +1655,11 @@ async function recalculateInstallment(installment, transaction) {
   });
 
   const paidInCents = payments.reduce(
-<<<<<<< HEAD
-    (total, payment) =>
-      total + moneyToCents(payment.amount),
-    0
-  );
-
-  const installmentInCents = moneyToCents(
-    installment.amount
-  );
-=======
     (total, payment) => total + moneyToCents(payment.amount),
     0,
   );
 
   const installmentInCents = moneyToCents(installment.amount);
->>>>>>> master
 
   let installmentStatus = "pendente";
 
@@ -2627,30 +1672,15 @@ async function recalculateInstallment(installment, transaction) {
   }
 
   const lastPayment =
-<<<<<<< HEAD
-    payments.length > 0
-      ? payments[payments.length - 1]
-      : null;
-=======
     payments.length > 0 ? payments[payments.length - 1] : null;
->>>>>>> master
 
   await installment.update(
     {
       paid_amount: (paidInCents / 100).toFixed(2),
-<<<<<<< HEAD
-      paid_date: lastPayment
-        ? lastPayment.paid_date
-        : null,
-      status: installmentStatus,
-    },
-    { transaction }
-=======
       paid_date: lastPayment ? lastPayment.paid_date : null,
       status: installmentStatus,
     },
     { transaction },
->>>>>>> master
   );
 
   return paidInCents;
@@ -2659,44 +1689,13 @@ async function recalculateInstallment(installment, transaction) {
 /**
  * Recalcula o status geral da conta a pagar.
  */
-<<<<<<< HEAD
-async function recalculatePayableStatus(
-  payableId,
-  transaction
-) {
-  const payable = await Payable.findByPk(
-    payableId,
-    { transaction }
-  );
-=======
 async function recalculatePayableStatus(payableId, transaction) {
   const payable = await Payable.findByPk(payableId, { transaction });
->>>>>>> master
 
   if (!payable) {
     return null;
   }
 
-<<<<<<< HEAD
-  const installments =
-    await PayableInstallment.findAll({
-      where: {
-        payable_id: payableId,
-      },
-      transaction,
-    });
-
-  const totalPaidInCents = installments.reduce(
-    (total, installment) =>
-      total +
-      moneyToCents(installment.paid_amount || 0),
-    0
-  );
-
-  const totalAmountInCents = moneyToCents(
-    payable.total_amount
-  );
-=======
   /*
    * Uma conta cancelada só volta a ficar ativa pela rota
    * específica de reativação. Recalcular pagamentos não deve
@@ -2719,7 +1718,6 @@ async function recalculatePayableStatus(payableId, transaction) {
   );
 
   const totalAmountInCents = moneyToCents(payable.total_amount);
->>>>>>> master
 
   let payableStatus = "pendente";
 
@@ -2733,11 +1731,7 @@ async function recalculatePayableStatus(payableId, transaction) {
     {
       status: payableStatus,
     },
-<<<<<<< HEAD
-    { transaction }
-=======
     { transaction },
->>>>>>> master
   );
 
   return payable;
@@ -2752,27 +1746,6 @@ const payInstallment = async (req, res) => {
   try {
     const { installmentId } = req.params;
 
-<<<<<<< HEAD
-    const {
-      amount,
-      paid_date,
-      financial_account_id,
-      payment_method,
-      note,
-    } = req.body;
-
-    const paidInCents = moneyToCents(amount);
-
-    if (
-      !Number.isFinite(paidInCents) ||
-      paidInCents <= 0
-    ) {
-      await rollbackTransaction(transaction);
-
-      return res.status(400).json({
-        error:
-          "O valor do pagamento deve ser maior que zero.",
-=======
     const { amount, paid_date, financial_account_id, payment_method, note } =
       req.body;
 
@@ -2783,7 +1756,6 @@ const payInstallment = async (req, res) => {
 
       return res.status(400).json({
         error: "O valor do pagamento deve ser maior que zero.",
->>>>>>> master
       });
     }
 
@@ -2791,12 +1763,7 @@ const payInstallment = async (req, res) => {
       await rollbackTransaction(transaction);
 
       return res.status(400).json({
-<<<<<<< HEAD
-        error:
-          "A data do pagamento é obrigatória.",
-=======
         error: "A data do pagamento é obrigatória.",
->>>>>>> master
       });
     }
 
@@ -2804,12 +1771,7 @@ const payInstallment = async (req, res) => {
       await rollbackTransaction(transaction);
 
       return res.status(400).json({
-<<<<<<< HEAD
-        error:
-          "A conta financeira é obrigatória.",
-=======
         error: "A conta financeira é obrigatória.",
->>>>>>> master
       });
     }
 
@@ -2821,20 +1783,9 @@ const payInstallment = async (req, res) => {
       "outro",
     ];
 
-<<<<<<< HEAD
-    const selectedPaymentMethod =
-      payment_method || "transferencia";
-
-    if (
-      !allowedPaymentMethods.includes(
-        selectedPaymentMethod
-      )
-    ) {
-=======
     const selectedPaymentMethod = payment_method || "transferencia";
 
     if (!allowedPaymentMethods.includes(selectedPaymentMethod)) {
->>>>>>> master
       await rollbackTransaction(transaction);
 
       return res.status(400).json({
@@ -2842,17 +1793,9 @@ const payInstallment = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    const installment =
-      await PayableInstallment.findByPk(
-        installmentId,
-        { transaction }
-      );
-=======
     const installment = await PayableInstallment.findByPk(installmentId, {
       transaction,
     });
->>>>>>> master
 
     if (!installment) {
       await rollbackTransaction(transaction);
@@ -2862,16 +1805,9 @@ const payInstallment = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    const payable = await Payable.findByPk(
-      installment.payable_id,
-      { transaction }
-    );
-=======
     const payable = await Payable.findByPk(installment.payable_id, {
       transaction,
     });
->>>>>>> master
 
     if (!payable) {
       await rollbackTransaction(transaction);
@@ -2885,18 +1821,6 @@ const payInstallment = async (req, res) => {
       await rollbackTransaction(transaction);
 
       return res.status(409).json({
-<<<<<<< HEAD
-        error:
-          "Não é possível pagar uma conta cancelada.",
-      });
-    }
-
-    const financialAccount =
-      await FinancialAccount.findByPk(
-        financial_account_id,
-        { transaction }
-      );
-=======
         error: "Não é possível pagar uma conta cancelada.",
       });
     }
@@ -2905,7 +1829,6 @@ const payInstallment = async (req, res) => {
       financial_account_id,
       { transaction },
     );
->>>>>>> master
 
     if (!financialAccount) {
       await rollbackTransaction(transaction);
@@ -2915,42 +1838,6 @@ const payInstallment = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    if (
-      financialAccount.active === false ||
-      financialAccount.active === 0
-    ) {
-      await rollbackTransaction(transaction);
-
-      return res.status(400).json({
-        error:
-          "A conta financeira selecionada está inativa.",
-      });
-    }
-
-    const confirmedPayments =
-      await PayablePayment.findAll({
-        where: {
-          installment_id: installment.id,
-          status: "confirmado",
-        },
-        transaction,
-      });
-
-    const alreadyPaidInCents =
-      confirmedPayments.reduce(
-        (total, payment) =>
-          total + moneyToCents(payment.amount),
-        0
-      );
-
-    const installmentInCents = moneyToCents(
-      installment.amount
-    );
-
-    const remainingInCents =
-      installmentInCents - alreadyPaidInCents;
-=======
     if (financialAccount.active === false || financialAccount.active === 0) {
       await rollbackTransaction(transaction);
 
@@ -2975,7 +1862,6 @@ const payInstallment = async (req, res) => {
     const installmentInCents = moneyToCents(installment.amount);
 
     const remainingInCents = installmentInCents - alreadyPaidInCents;
->>>>>>> master
 
     if (remainingInCents <= 0) {
       await rollbackTransaction(transaction);
@@ -3000,62 +1886,17 @@ const payInstallment = async (req, res) => {
     const payment = await PayablePayment.create(
       {
         installment_id: installment.id,
-<<<<<<< HEAD
-        financial_account_id: Number(
-          financial_account_id
-        ),
-        amount: (paidInCents / 100).toFixed(2),
-        paid_date,
-        payment_method:
-          selectedPaymentMethod,
-        status: "confirmado",
-        note:
-          typeof note === "string" &&
-          note.trim()
-            ? note.trim()
-            : null,
-=======
         financial_account_id: Number(financial_account_id),
         amount: (paidInCents / 100).toFixed(2),
         paid_date,
         payment_method: selectedPaymentMethod,
         status: "confirmado",
         note: typeof note === "string" && note.trim() ? note.trim() : null,
->>>>>>> master
         reversed_at: null,
         exported: false,
         exported_at: null,
         export_batch: null,
       },
-<<<<<<< HEAD
-      { transaction }
-    );
-
-    await recalculateInstallment(
-      installment,
-      transaction
-    );
-
-    await recalculatePayableStatus(
-      payable.id,
-      transaction
-    );
-
-    await transaction.commit();
-
-    const updatedPayable =
-      await Payable.findByPk(payable.id, {
-        include: getPayableIncludes(),
-      });
-
-    return res.json({
-      message:
-        "Pagamento registrado com sucesso.",
-      payment,
-      payable: buildPayableData(
-        updatedPayable
-      ),
-=======
       { transaction },
     );
 
@@ -3073,19 +1914,11 @@ const payInstallment = async (req, res) => {
       message: "Pagamento registrado com sucesso.",
       payment,
       payable: buildPayableData(updatedPayable),
->>>>>>> master
     });
   } catch (error) {
     await rollbackTransaction(transaction);
 
-<<<<<<< HEAD
-    console.error(
-      "Erro ao registrar pagamento:",
-      error
-    );
-=======
     console.error("Erro ao registrar pagamento:", error);
->>>>>>> master
 
     return res.status(500).json({
       error: "Erro ao registrar pagamento.",
@@ -3097,27 +1930,13 @@ const payInstallment = async (req, res) => {
 /**
  * Estornar um pagamento específico.
  */
-<<<<<<< HEAD
-const reversePayablePayment = async (
-  req,
-  res
-) => {
-=======
 const reversePayablePayment = async (req, res) => {
->>>>>>> master
   const transaction = await sequelize.transaction();
 
   try {
     const { paymentId } = req.params;
 
-<<<<<<< HEAD
-    const payment = await PayablePayment.findByPk(
-      paymentId,
-      { transaction }
-    );
-=======
     const payment = await PayablePayment.findByPk(paymentId, { transaction });
->>>>>>> master
 
     if (!payment) {
       await rollbackTransaction(transaction);
@@ -3131,18 +1950,6 @@ const reversePayablePayment = async (req, res) => {
       await rollbackTransaction(transaction);
 
       return res.status(409).json({
-<<<<<<< HEAD
-        error:
-          "Este pagamento já foi estornado.",
-      });
-    }
-
-    const installment =
-      await PayableInstallment.findByPk(
-        payment.installment_id,
-        { transaction }
-      );
-=======
         error: "Este pagamento já foi estornado.",
       });
     }
@@ -3151,7 +1958,6 @@ const reversePayablePayment = async (req, res) => {
       payment.installment_id,
       { transaction },
     );
->>>>>>> master
 
     if (!installment) {
       await rollbackTransaction(transaction);
@@ -3166,37 +1972,6 @@ const reversePayablePayment = async (req, res) => {
         status: "estornado",
         reversed_at: new Date(),
       },
-<<<<<<< HEAD
-      { transaction }
-    );
-
-    await recalculateInstallment(
-      installment,
-      transaction
-    );
-
-    await recalculatePayableStatus(
-      installment.payable_id,
-      transaction
-    );
-
-    await transaction.commit();
-
-    const updatedPayable =
-      await Payable.findByPk(
-        installment.payable_id,
-        {
-          include: getPayableIncludes(),
-        }
-      );
-
-    return res.json({
-      message:
-        "Pagamento estornado com sucesso.",
-      payable: buildPayableData(
-        updatedPayable
-      ),
-=======
       { transaction },
     );
 
@@ -3213,19 +1988,11 @@ const reversePayablePayment = async (req, res) => {
     return res.json({
       message: "Pagamento estornado com sucesso.",
       payable: buildPayableData(updatedPayable),
->>>>>>> master
     });
   } catch (error) {
     await rollbackTransaction(transaction);
 
-<<<<<<< HEAD
-    console.error(
-      "Erro ao estornar pagamento:",
-      error
-    );
-=======
     console.error("Erro ao estornar pagamento:", error);
->>>>>>> master
 
     return res.status(500).json({
       error: "Erro ao estornar pagamento.",
@@ -3244,8 +2011,4 @@ module.exports = {
   deletePayable,
   payInstallment,
   reversePayablePayment,
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> master
